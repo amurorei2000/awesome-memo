@@ -17,11 +17,12 @@ def create_memo(memo: Memo):
     memos.append(memo)
     print(memo.id)
     print(memo.content)
-    return {"status": 200,  "message": "success", "content": memos}
+    return memo
 
 @app.get("/memos")
 def get_memo():
-    return {"status": 200, "message": "success", "content": memos}
+    # return {"status": 200, "message": "success", "content": memos}
+    return memos
 
 # html 마운트
 app.mount("/", StaticFiles(directory='static', html=True), name='static')
