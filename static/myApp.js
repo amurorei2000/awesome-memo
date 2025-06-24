@@ -1,5 +1,30 @@
-function editMemo(event) {
-  console.log(event.target);
+async function editMemo(event) {
+  const id = event.target.dataset.id;
+  console.log(`button id: ${id}`);
+  const memo = window.prompt("수정할 메모 내용을 입력하세요");
+
+  const res = await fetch(`/memos/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: id,
+      content: memo,
+    }),
+  });
+
+  // console.log(res);
+  readMemo();
+}
+
+async function deleteMemo(event) {
+  const id = event.target.dataset.id;
+  const res = await fetch(`/memos/${id}`, {
+    method: "DELETE",
+  });
+
+  readMemo();
 }
 
 function displayMemo(memo) {
@@ -10,13 +35,20 @@ function displayMemo(memo) {
   const li = document.createElement("li");
   li.innerText = `[id: ${memo.id}] ${memo.content}`;
 
-  // 버튼 태그 생성
-  // const editBtn = document.createElement("button");
-  // editBtn.innerText = "수정하기";
-  // editBtn.addEventListener("click", editMemo);
-  // editBtn.dataset.id = memo.id;
+  // 수정 버튼 태그 생성
+  const editBtn = document.createElement("button");
+  editBtn.innerText = "수정하기";
+  editBtn.addEventListener("click", editMemo);
+  editBtn.dataset.id = memo.id;
 
-  // li.appendChild(editBtn);
+  // 삭제 버튼 태그 생성
+  const delBtn = document.createElement("button");
+  delBtn.innerText = "삭제";
+  delBtn.addEventListener("click", deleteMemo);
+  delBtn.dataset.id = memo.id;
+
+  li.appendChild(editBtn);
+  li.appendChild(delBtn);
   ul.appendChild(li);
 }
 
@@ -24,7 +56,6 @@ async function readMemo() {
   // 서버에서 배열 값 가져오기
   const res = await fetch("/memos");
   const resJson = await res.json();
-  console.log(resJson);
 
   // ul 초기화
   const ul = document.querySelector("#memo-ul");
